@@ -10,12 +10,24 @@ class customerList(baseObject):
         
         if len(self.data[n]['fname']) == 0:
             self.errorList.append("First name cannot be blank.")
-        #Add if statements for validation of other fields
-  
-        if len(self.errorList) > 0:
-            return False
-        else:
-            return True
+        if len(self.data[n]['lname']) == 0:
+            self.errorList.append("Last name cannot be blank.")    
+        if len(self.data[n]['email']) == 0:
+            self.errorList.append("Email cannot be blank.")
+        if len(self.data[n]['password']) == 0:
+            self.errorList.append("Password cannot be blank.")    
+        elif len(self.data[n]['password']) < 4:
+            self.errorList.append("Password cannot be shorter than 4 characters.")      
+        if len(self.data[n]['subscribed']) == 0:
+            self.errorList.append("Subscribed cannot be blank.")   
+#email must haves
+        if "." not in self.data[n]['email']:
+            self.errorList.append("Email must include a period.")
+        elif "@" not in self.data[n]['email']:
+            self.errorList.append("Email must include @ symbol.")
+#not sure on subscribed boolean
+        if not ((self.data[n]['subscribed'] == "True") or (self.data[n]['subscribed'] == "False")):
+            self.errorList.append("Subscribed must be True or False")
     
     
     
