@@ -28,8 +28,26 @@ class customerList(baseObject):
 #not sure on subscribed boolean
         if not ((self.data[n]['subscribed'] == "True") or (self.data[n]['subscribed'] == "False")):
             self.errorList.append("Subscribed must be True or False")
-    
-    
+            
+            
+            
+    def tryLogin(self,email,pw):
+        sql = 'SELECT * FROM `' + self.tn + '` WHERE `email` = %s AND `password` = %s;'
+        tokens = (email,pw)
+        self.connect()
+        cur = self.conn.cursor(pymysql.cursors.DictCursor)
+        #print(sql)
+        #print(tokens)
+        cur.execute(sql,tokens)
+        self.data = []
+        n=0
+        for row in cur:
+            self.data.append(row)
+            n+=1
+        if n > 0:
+            return True
+        else:
+            return False
     
     
     
