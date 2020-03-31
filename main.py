@@ -26,15 +26,30 @@ def get():
     
 @app.route('/login',methods = ['GET','POST'])
 def login():
+    '''
+    -check login
+    -set session
+    -redirect menu
+    --check session on login page
+    '''    
     if request.form.get('email') is not None and request.form.get('password') is not None:
         c = customerList()
         if c.tryLogin(request.form.get('email'),request.form.get('password')):
             print('login ok')
+            session['user'] = c.data[0]
+            session['active'] = time.time()
+            
+            return redirect('main')
         else:
             print('login failed')
         return ''    
     else:
-        return render_template('login.html', title='Login', msg='Type your email and password to continue.')    
+        if 'msg' not in session.keys() or session['msg'] is None:
+            m = 'Type your email and password to continue.'
+        else: 
+            m = session['msg']
+            session['msg'] = None    
+        return render_template('login.html', title='Login', msg=m)    
 
 @app.route('/basichttp')
 def basichttp():
@@ -130,7 +145,20 @@ def savecustomer():
 
 @app.route('/main')
 def main():
-    return render_template('main.html', title='Main Menu')
+    if checkSession() == False: #check to make sure the user is logged in
+        return redirect('login')
+    userinfo = 'Hello, ' + session['user']['fname']
+    return render_template('main.html', title='Main Menu',msg = userinfo)
+    
+def checkSession():
+    timeSinceActivity = time.time() - session['active']
+    print(timeSinceActivity)
+    if timeSinceActivity > 15:
+        session['msg'] = 'Your session has timed out.'
+        return False
+    else:    
+        session['active'] = time.time()
+        return True
 
 @app.route('/static/<path:path>')
 def send_static(path):
