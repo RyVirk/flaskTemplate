@@ -42,7 +42,7 @@ def login():
             return redirect('main')
         else:
             print('login failed')
-        return ''    
+            return render_template('login.html', title='Login', msg='Incorrect username or password')     
     else:
         if 'msg' not in session.keys() or session['msg'] is None:
             m = 'Type your email and password to continue.'
@@ -50,6 +50,12 @@ def login():
             m = session['msg']
             session['msg'] = None    
         return render_template('login.html', title='Login', msg=m)    
+
+@app.route('/logout',methods = ['GET','POST'])
+def logout():
+    del session['user'] = None
+    del session['active'] = None
+    return render_template('login.html', title='Login', msg='You have logged out.') 
 
 @app.route('/basichttp')
 def basichttp():
@@ -151,14 +157,17 @@ def main():
     return render_template('main.html', title='Main Menu',msg = userinfo)
     
 def checkSession():
-    timeSinceActivity = time.time() - session['active']
-    print(timeSinceActivity)
-    if timeSinceActivity > 15:
-        session['msg'] = 'Your session has timed out.'
+    if 'active' in session.keys():    
+            timeSinceActivity = time.time() - session['active']
+            print(timeSinceActivity)
+        if timeSinceActivity > 500:
+            session['msg'] = 'Your session has timed out.'
+            return False
+        else:    
+            session['active'] = time.time()
+            return True
+    else:
         return False
-    else:    
-        session['active'] = time.time()
-        return True
 
 @app.route('/static/<path:path>')
 def send_static(path):
