@@ -53,8 +53,8 @@ def login():
 
 @app.route('/logout',methods = ['GET','POST'])
 def logout():
-    del session['user'] = None
-    del session['active'] = None
+    del session['user']
+    del session['active'] 
     return render_template('login.html', title='Login', msg='You have logged out.') 
 
 @app.route('/basichttp')
@@ -158,8 +158,8 @@ def main():
     
 def checkSession():
     if 'active' in session.keys():    
-            timeSinceActivity = time.time() - session['active']
-            print(timeSinceActivity)
+        timeSinceActivity = time.time() - session['active']
+        print(timeSinceActivity)
         if timeSinceActivity > 500:
             session['msg'] = 'Your session has timed out.'
             return False
